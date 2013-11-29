@@ -49,7 +49,8 @@ class HttpHandler:
         self.session = session
         self.logger = logger
 
-    def transform_path(self, path):
+    @staticmethod
+    def transform_path(path):
         """
         Help method to point robots.txt to the path to the file.
         :param path: Requested path.
@@ -102,7 +103,7 @@ class HttpHandler:
                 self.start_response('200 OK', [('Content-Type', "text/html")])
             return [text]
         except IOError:
-            return self.Http404()
+            return self.http404
 
     def log_response(self, response):
         """
@@ -171,7 +172,7 @@ class HttpHandler:
         """
         return self.environ.get('PATH_INFO', '').lstrip('/')
 
-    def Http404(self):
+    def http404(self):
         """
         WSGI HTTP 404 response.
         :return WSGI response for HTTP 404.
@@ -531,4 +532,3 @@ class CookieDealer(object):
             except Exception:
                 pass
         return None
-

@@ -12,7 +12,7 @@ setup(
     classifiers = ["Development Status :: 4 - Beta",
         "License :: OSI Approved :: Apache Software License",
         "Topic :: Software Development :: Libraries :: Python Modules"],
-    install_requires = ["cherrypy", "mako", "beaker"],
+    install_requires = ["cherrypy", "mako", "beaker", "M2Crypto"],
     zip_safe=False,
     data_files=[
         ("/opt/dirg/dirg-util/mako/templates/", [

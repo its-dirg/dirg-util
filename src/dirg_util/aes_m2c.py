@@ -18,7 +18,7 @@ import M2Crypto
 from base64 import b64encode, b64decode
 
 
-def AES_build_cipher(key, iv, op=1, alg="aes_128_cbc"):
+def aes_build_cipher(key, iv, op=1, alg="aes_128_cbc"):
     """
     :param key: encryption key
     :param iv: init vector
@@ -29,7 +29,7 @@ def AES_build_cipher(key, iv, op=1, alg="aes_128_cbc"):
     return M2Crypto.EVP.Cipher(alg=alg, key=key, iv=iv, op=op)
 
 
-def AES_encrypt(key, msg, iv=None):
+def aes_encrypt(key, msg, iv=None):
     """
     :param key: The encryption key
     :param iv: init vector
@@ -40,14 +40,14 @@ def AES_encrypt(key, msg, iv=None):
     if iv is None:
         iv = '\0' * 16
 
-    cipher = AES_build_cipher(key, iv, 1)
+    cipher = aes_build_cipher(key, iv, 1)
     v = cipher.update(msg)
     v = v + cipher.final()
     v = b64encode(v)
     return v
 
 
-def AES_decrypt(key, msg, iv=None):
+def aes_decrypt(key, msg, iv=None):
     """
     :param key: The encryption key
     :param iv: init vector
@@ -58,7 +58,7 @@ def AES_decrypt(key, msg, iv=None):
         iv = '\0' * 16
 
     data = b64decode(msg)
-    cipher = AES_build_cipher(key, iv, 0)
+    cipher = aes_build_cipher(key, iv, 0)
     v = cipher.update(data)
     v = v + cipher.final()
     return v
@@ -68,5 +68,5 @@ if __name__ == "__main__":
     key = "123452345"
     msg = "ToBeOrNotTobe W.S."
     iv = os.urandom(16)
-    encrypted_msg = AES_encrypt(key, msg, iv)
-    print AES_decrypt(key, encrypted_msg, iv)
+    encrypted_msg = aes_encrypt(key, msg, iv)
+    print aes_decrypt(key, encrypted_msg, iv)

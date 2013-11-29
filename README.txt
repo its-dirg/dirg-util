@@ -1,4 +1,6 @@
 ===========
-dirg-basicweb
+dirg-util
 ===========
-A basic example web application that shows the css and javascript techniques that are used within dirg.
+Contains common files for all projects within dirg.
+
+This includes python files, static web files and mako templates.

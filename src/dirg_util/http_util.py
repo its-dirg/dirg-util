@@ -25,8 +25,8 @@ from urllib import quote
 
 from dirg_util import time_util
 
-from dirg_util.aes_m2c import AES_encrypt
-from dirg_util.aes_m2c import AES_decrypt
+from dirg_util.aes_m2c import aes_encrypt
+from dirg_util.aes_m2c import aes_decrypt
 
 
 class UnsupportedMethod(Exception):
@@ -504,7 +504,7 @@ class CookieDealer(object):
         if cookie_name is None:
             cookie_name = self.srv.cookie_name
         timestamp = str(int(time.mktime(time.gmtime())))
-        info = AES_encrypt(self.srv.symkey,
+        info = aes_encrypt(self.srv.symkey,
                            "::".join([value, timestamp, typ]),
                            self.srv.iv)
         cookie = make_cookie(cookie_name, info, self.srv.seed,
@@ -525,7 +525,7 @@ class CookieDealer(object):
             try:
                 info, timestamp = parse_cookie(cookie_name,
                                                self.srv.seed, cookie)
-                value, _ts, typ = AES_decrypt(self.srv.symkey, info,
+                value, _ts, typ = aes_decrypt(self.srv.symkey, info,
                                               self.srv.iv).split("::")
                 if timestamp == _ts:
                     return value, _ts, typ

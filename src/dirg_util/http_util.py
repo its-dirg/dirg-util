@@ -103,7 +103,7 @@ class HttpHandler:
                 self.start_response('200 OK', [('Content-Type', "text/html")])
             return [text]
         except IOError:
-            return self.http404
+            return self.http404()
 
     def log_response(self, response):
         """

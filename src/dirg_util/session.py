@@ -26,7 +26,7 @@ Extend this class and use getters and setters if you want to make it more easy t
 """
 
 
-class Session:
+class Session(object):
     BEAKER = 'beaker.session'
 
     def __init__(self, environ):

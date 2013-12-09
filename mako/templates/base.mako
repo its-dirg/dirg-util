@@ -18,13 +18,9 @@ In this file all the imports of external libraries should be declared.
 
         <%block name="header">
             <toaster-container toaster-options="{'time-out': 6000}"></toaster-container>
-
-            <div ng-controller="IndexCtrl">
                 <div class="container">
 
-                    <div class="headline">
-                        Title
-                    </div>
+                    <%block name="headline"></%block>
 
                     <div id="formContainer" class="jumbotron">
         </%block>
@@ -34,7 +30,6 @@ In this file all the imports of external libraries should be declared.
         <%block name="footer">
                     </div>
                 </div>
-            </div>
 
             <script src="/static/toaster.js"></script>
         </%block>

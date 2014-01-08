@@ -5,6 +5,7 @@ In this file all the imports of external libraries should be declared.
 <html ng-app="main">
     <head>
         <script src="/static/angular.js" ></script>
+        <script src="/static/bootbox.min.js" ></script>
         <script src="/static/jquery.min.latest.js"></script>
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
         <%block name="script"/>

@@ -18,16 +18,15 @@ import time
 import hashlib
 import hmac
 import json
+import string
 from urlparse import parse_qs
 from StringIO import StringIO
 from Cookie import SimpleCookie
 from urllib import quote
-
+from Crypto.Random import random
 from dirg_util import time_util
 
-from dirg_util.aes_m2c import aes_encrypt
-from dirg_util.aes_m2c import aes_decrypt
-
+from dirg_util.aes import AESCipher
 
 class UnsupportedMethod(Exception):
     pass
@@ -484,19 +483,40 @@ def wsgi_wrapper(environ, start_response, func, **kwargs):
     resp = func(**kwargs)
     return resp(environ, start_response)
 
+class InvalidCookieSign(Exception):
+    pass
 
 class CookieDealer(object):
     def __init__(self, srv, ttl=5):
-        self.srv = srv
+        self.srv = None
+        self.init_srv(srv)
         # minutes before the interaction should be completed
         self.cookie_ttl = ttl  # N minutes
+        self.pad_chr = " "
+
+    def init_srv(self, srv):
+        if srv:
+            self.srv = srv
+
+            for param in ["seed", "iv"]:
+                if not getattr(srv, param, None):
+                    setattr(srv, param, self.random_string())
+
+    def random_string(self, _size=16):
+        """
+        Returns a string of random ascii characters or digits
+
+        :param size: The length of the string
+        :return: string
+        """
+        return "".join([random.choice(string.ascii_letters + string.digits) for _ in range(_size)])
 
     def delete_cookie(self, cookie_name=None):
         if cookie_name is None:
             cookie_name = self.srv.cookie_name
         return self.create_cookie("", "", cookie_name=cookie_name, ttl=-1, kill=True)
 
-    def create_cookie(self, value, typ, cookie_name=None, ttl=-1, kill=False):
+    def create_cookie(self, value, typ, cookie_name=None, ttl=-1, kill=False, path=""):
         if kill:
             ttl = -1
         elif ttl < 0:
@@ -504,14 +524,22 @@ class CookieDealer(object):
         if cookie_name is None:
             cookie_name = self.srv.cookie_name
         timestamp = str(int(time.mktime(time.gmtime())))
-        info = aes_encrypt(self.srv.symkey,
-                           "::".join([value, timestamp, typ]),
-                           self.srv.iv)
+        _msg = "::".join([value, timestamp, typ])
+        if self.srv.symkey:
+            # Pad the message to be multiples of 16 bytes in length
+            lm = len(_msg)
+            _msg = _msg.ljust(lm + 16 - lm % 16, self.pad_chr)
+            info = AESCipher(self.srv.symkey, self.srv.iv).encrypt(_msg)
+        else:
+            info = _msg
         cookie = make_cookie(cookie_name, info, self.srv.seed,
-                             expire=ttl, domain="", path="")
+                             expire=ttl, domain="", path=path)
         return cookie
 
-    def cookie_value(self, cookie=None, cookie_name=None):
+    def getCookieValue(self, cookie=None, cookie_name=None):
+        return self.get_cookie_value(cookie, cookie_name)
+
+    def get_cookie_value(self, cookie=None, cookie_name=None):
         """
         Return information stored in the Cookie
 
@@ -525,10 +553,16 @@ class CookieDealer(object):
             try:
                 info, timestamp = parse_cookie(cookie_name,
                                                self.srv.seed, cookie)
-                value, _ts, typ = aes_decrypt(self.srv.symkey, info,
-                                              self.srv.iv).split("::")
+                if self.srv.symkey:
+                    txt = AESCipher(self.srv.symkey, self.srv.iv).decrypt(info)
+                    # strip spaces at the end
+                    txt = txt.rstrip(self.pad_chr)
+                else:
+                    txt = info
+
+                value, _ts, typ = txt.split("::")
                 if timestamp == _ts:
                     return value, _ts, typ
-            except Exception:
+            except (TypeError, AssertionError):
                 pass
         return None

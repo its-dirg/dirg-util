@@ -25,7 +25,8 @@ setup(
                                         "static/jquery.min.1.9.1.js",
                                         "static/jquery.min.latest.js",
                                         "static/toaster.css",
-                                        "static/toaster.js"
+                                        "static/toaster.js",
+                                        "static/robots.txt"
                                     ]),
         ("/opt/dirg/dirg-util/static/bootstrap/css", [
                                         "static/bootstrap/css/angular.js",

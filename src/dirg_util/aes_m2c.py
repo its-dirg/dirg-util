@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+'''
 import os
 import M2Crypto
 from base64 import b64encode, b64decode
@@ -70,3 +71,4 @@ if __name__ == "__main__":
     iv = os.urandom(16)
     encrypted_msg = aes_encrypt(key, msg, iv)
     print aes_decrypt(key, encrypted_msg, iv)
+'''

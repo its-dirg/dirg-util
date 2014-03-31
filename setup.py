@@ -7,12 +7,12 @@ setup(
     author = "Hans, Hoerberg och Daniel Evertsson",
     author_email = "hans.horberg@umu.se, daniel.evertsson@umu.se",
     license="Apache 2.0",
-    packages=["dirg_util"],
+    packages=["dirg_util", "auth"],
     package_dir = {"": "src"},
     classifiers = ["Development Status :: 4 - Beta",
         "License :: OSI Approved :: Apache Software License",
         "Topic :: Software Development :: Libraries :: Python Modules"],
-    install_requires = ["cherrypy", "mako", "beaker", "M2Crypto"],
+    install_requires = ["cherrypy", "mako", "beaker"],
     zip_safe=False,
     data_files=[
         ("/opt/dirg/dirg-util/mako/templates/", [
@@ -20,11 +20,13 @@ setup(
                                     ]),
         ("/opt/dirg/dirg-util/static/", [
                                         "static/angular.js",
+                                        "static/bootbox.min.js",
                                         "static/basic.css",
                                         "static/jquery.min.1.9.1.js",
                                         "static/jquery.min.latest.js",
                                         "static/toaster.css",
-                                        "static/toaster.js"
+                                        "static/toaster.js",
+                                        "static/robots.txt"
                                     ]),
         ("/opt/dirg/dirg-util/static/bootstrap/css", [
                                         "static/bootstrap/css/angular.js",

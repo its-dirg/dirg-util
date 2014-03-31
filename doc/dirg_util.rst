@@ -4,10 +4,26 @@ dirg_util package
 Submodules
 ----------
 
+dirg_util.aes module
+--------------------
+
+.. automodule:: dirg_util.aes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 dirg_util.aes_m2c module
 ------------------------
 
 .. automodule:: dirg_util.aes_m2c
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+dirg_util.dict module
+---------------------
+
+.. automodule:: dirg_util.dict
     :members:
     :undoc-members:
     :show-inheritance:

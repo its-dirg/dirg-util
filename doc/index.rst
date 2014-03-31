@@ -15,6 +15,7 @@ Contents:
    :maxdepth: 4
 
    dirg_util
+   usage
 
 
 Indices and tables

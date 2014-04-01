@@ -3,11 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to dirg_util's documentation!
+Dirg-util
 =====================================
 
 :Release: |release|
 :Date: |today|
+
+Dirg-util contains the base components used for building web applications in projects created by DIRG.
 
 Contents:
 

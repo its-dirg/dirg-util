@@ -115,10 +115,10 @@ html_sidebars = {
 }
 
 html_theme_options = {
-   'description': 'SAML2 and OpenID Connect',
+   'description': '',
    'github_button': True,
    'github_user': 'its-dirg',
-   'github_repo': 'IdProxy',
+   'github_repo': 'dirg-util',
    'github_banner': True,
 
 }

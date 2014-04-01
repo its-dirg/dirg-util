@@ -116,10 +116,10 @@ html_sidebars = {
 
 html_theme_options = {
    'description': '',
-   'github_button': True,
+   'github_button': False,
    'github_user': 'its-dirg',
    'github_repo': 'dirg-util',
-   'github_banner': True,
+   'github_banner': False,
 
 }
 

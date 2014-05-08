@@ -74,11 +74,60 @@ class ReadOnlyLDAPDictException(Exception):
 class TooWideLDAPSearchException(Exception):
     pass
 
+        ldap_settings = {
+            "ldapuri": "ldaps://ldap.test.umu.se",
+            "base": "dc=umu, dc=se",
+            "filter_pattern": "(uid=%s)",
+            "user": "",
+            "passwd": "",
+            "attr": [
+                "eduPersonScopedAffiliation",
+                "eduPersonAffiliation",
+                "eduPersonPrincipalName",
+                "givenName",
+                "sn",
+                "mail",
+                "uid",
+                "o",
+                "c",
+                "labeledURI",
+                "ou",
+                "displayName",
+                "norEduPersonLIN"
+            ],
+            "keymap": {
+                "mail": "email",
+                "labeledURI": "labeledURL",
+            },
+            "static_values": {
+                "eduPersonTargetedID": "one!for!all",
+            },
+            "exact_match": True,
+            "firstonly_len1": True,
+            "timeout": 15,
+        }
 
+#View an example in src/tesdts/LDAPDict.py.
 class LDAPDict(UserDict.DictMixin):
     def __init__(self, ldapuri, base, filter_pattern, scope=SCOPE_SUBTREE, attr=None, user="", passwd="",
                  firsonly=False, keymap=None, attrsonly=False, static_values=None, exact_match=False,
                  firstonly_len1=False, timeout=15):
+        """
+        :param ldapuri: Url to your ldap server. ldaps://ldap.server.com
+        :param base: Base for your ldap search. For example "dc=domain, dc=com"
+        :param filter_pattern: A search pattern. For example if you like to search for a specific user use "(uid=%s)"
+        :param scope: Use default value or read the python ldap documentation.
+        :param attr: None if you want to collect all attributes or a list with all attributes you want returned.
+        :param user: Username with access to the ldap database.
+        :param passwd: Password for the user.
+        :param firsonly: Will always only return the first element in a list of values for each ldap attribute.
+        :param keymap: Will map the ldap values to a different key.
+        :param attrsonly: Use default value or read the python ldap documentation.
+        :param static_values: Static values that is always added to the dictionary.
+        :param exact_match: Only attributes that match exactly with the the attr list will be returned.
+        :param firstonly_len1: If a LDAP attribute only contains one element, return the first value.
+        :param timeout: Time in minutes before a key is removed from the cache and a new LDAP call is performed.
+        """
         self.ldapuri = ldapuri
         self.base = base
         self.filter_pattern = filter_pattern

@@ -50,6 +50,6 @@ class RuleRoleTest(unittest.TestCase):
             self.fail("Not allowed to update the dictionary")
         except ReadOnlyLDAPDictException as ex:
             pass
-        user_dict = ldap_dict['pejo0100']
+        user_dict = ldap_dict['haho0032']
         self.assertTrue("eduPersonTargetedID" in user_dict)
 

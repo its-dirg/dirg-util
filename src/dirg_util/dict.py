@@ -74,39 +74,6 @@ class ReadOnlyLDAPDictException(Exception):
 class TooWideLDAPSearchException(Exception):
     pass
 
-        ldap_settings = {
-            "ldapuri": "ldaps://ldap.test.umu.se",
-            "base": "dc=umu, dc=se",
-            "filter_pattern": "(uid=%s)",
-            "user": "",
-            "passwd": "",
-            "attr": [
-                "eduPersonScopedAffiliation",
-                "eduPersonAffiliation",
-                "eduPersonPrincipalName",
-                "givenName",
-                "sn",
-                "mail",
-                "uid",
-                "o",
-                "c",
-                "labeledURI",
-                "ou",
-                "displayName",
-                "norEduPersonLIN"
-            ],
-            "keymap": {
-                "mail": "email",
-                "labeledURI": "labeledURL",
-            },
-            "static_values": {
-                "eduPersonTargetedID": "one!for!all",
-            },
-            "exact_match": True,
-            "firstonly_len1": True,
-            "timeout": 15,
-        }
-
 #View an example in src/tesdts/LDAPDict.py.
 class LDAPDict(UserDict.DictMixin):
     def __init__(self, ldapuri, base, filter_pattern, scope=SCOPE_SUBTREE, attr=None, user="", passwd="",

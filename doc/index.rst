@@ -14,10 +14,14 @@ Dirg-util contains the base components used for building web applications in pro
 Contents:
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
-   dirg_util
    usage
+
+.. toctree::
+    :maxdepth: 1
+
+    contents
 
 
 Indices and tables

@@ -7,7 +7,7 @@ setup(
     author = "Hans, Hoerberg och Daniel Evertsson",
     author_email = "hans.horberg@umu.se, daniel.evertsson@umu.se",
     license="Apache 2.0",
-    packages=["dirg_util", "auth"],
+    packages=["dirg_util", "auth", "auth/pyoidc"],
     package_dir = {"": "src"},
     classifiers = ["Development Status :: 4 - Beta",
         "License :: OSI Approved :: Apache Software License",

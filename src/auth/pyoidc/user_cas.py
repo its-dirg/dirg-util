@@ -1,22 +1,15 @@
-import json
-import urllib
-import urlparse
-import uuid
+
 import logging
 from auth.cas import CasAuthentication
-import requests
-import base64
-import xml.etree.ElementTree as ET
-from oic.utils.authn.user import UserAuthnMethod
-from urlparse import parse_qs
 from oic.utils.http_util import Redirect
 from oic.utils.http_util import Unauthorized
+from auth.pyoidc.user import _UserAuthnMethod
 
 logger = logging.getLogger(__name__)
 
 
 #This class handles user authentication with CAS.
-class CasAuthnMethod(UserAuthnMethod):
+class CasAuthnMethod(_UserAuthnMethod):
     #Parameter name for queries to be sent back on the URL, after successful
     # authentication.
     CONST_QUERY = "query"
@@ -32,8 +25,10 @@ class CasAuthnMethod(UserAuthnMethod):
         :param return_to: The URL to return to after a successful
         authentication.
         """
-        UserAuthnMethod.__init__(self, srv, authn_helper=CasAuthentication(cas_server, service_url, extra_validation=None,
-                                 cookie_dict=None, cookie_object=None))
+        _UserAuthnMethod.__init__(self, srv, authn_helper=CasAuthentication(cas_server, service_url,
+                                                                            extra_validation=None,
+                                                                            cookie_dict=None,
+                                                                            cookie_object=None))
         self.return_to = return_to
 
     def __call__(self, query, *args, **kwargs):
@@ -58,7 +53,7 @@ class CasAuthnMethod(UserAuthnMethod):
         :raise: ValueError
         """
         try:
-            valid, uid, return_to_query  = self.authn_helper.verify(request, cookie, **kwargs)
+            valid, uid, return_to_query = self.authn_helper.verify(request, cookie, **kwargs)
             if valid:
                 cookie = self.authn_helper.create_authentication_cookie(uid, "casm")
                 return_to = self.generateReturnUrl(self.return_to, uid)

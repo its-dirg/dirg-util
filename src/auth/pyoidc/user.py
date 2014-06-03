@@ -1,6 +1,7 @@
 import logging
 import urlparse
-from oic.utils.authn.user import UserAuthnMethod
+import time
+from oic.utils.authn.user import UserAuthnMethod, create_return_url
 from auth.form import DirgUsernamePasswordYubikeyMako
 from oic.utils.http_util import Redirect
 from oic.utils.http_util import Unauthorized
@@ -10,7 +11,31 @@ __author__ = 'haho0032'
 logger = logging.getLogger(__name__)
 
 
-class UsernamePasswordMako(UserAuthnMethod):
+class _UserAuthnMethod(UserAuthnMethod):
+    def __init__(self, srv, ttl=5, authn_helper=None):
+        UserAuthnMethod.__init__(self, srv, ttl)
+        self.query_param = "upm_answer"
+        self.authn_helper = authn_helper
+        self.userauthnmethod = UserAuthnMethod(srv, ttl)
+
+    def __call__(self, *args, **kwargs):
+        raise NotImplemented
+
+    def set_srv(self, srv):
+        self.srv = srv
+        if self.authn_helper is not None:
+            self.authn_helper.srv = srv
+
+    def authenticated_as(self, cookie=None, **kwargs):
+        if self.authn_helper is not None:
+            return self.authn_helper.authenticated_as(cookie, **kwargs)
+        self.userauthnmethod.authenticated_as(cookie=None, **kwargs)
+
+    def generateReturnUrl(self, return_to, uid):
+        return create_return_url(return_to, uid, **{self.query_param: "true"})
+
+
+class UsernamePasswordMako(_UserAuthnMethod):
     """Do user authentication using the normal username password form in a
     WSGI environment using Mako as template system"""
 
@@ -29,7 +54,7 @@ class UsernamePasswordMako(UserAuthnMethod):
                                                      password_query_key, yubikey_db, yubikey_server, yubikey_otp_key,
                                                      cookie_dict=cookie_dict, )
 
-        UserAuthnMethod.__init__(self, srv, authn_helper=authn_helper)
+        _UserAuthnMethod.__init__(self, srv, authn_helper=authn_helper)
 
 
         self.return_to = return_to
@@ -111,4 +136,3 @@ class UsernamePasswordMako(UserAuthnMethod):
             return False
         except KeyError:
             return True
-

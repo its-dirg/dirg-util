@@ -24,6 +24,8 @@ class CookieObject(object):
 
 
 class Authenticate(CookieDealer):
+    CONST_ACR = 'acr_values'
+
     def __init__(self, cookie_dict=None, cookie_object=None):
         self.aes_chipher = None
         if cookie_object is not None:

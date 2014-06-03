@@ -65,7 +65,7 @@ class CasAuthentication(Authenticate):
                 filter_query = "&" + urllib.urlencode(filter_dict)
         return filter_query
 
-    def create_redirect(self, query, filter={}):
+    def create_redirect(self, query, acr, filter={}):
         """
         Performs the redirect to the CAS server.
 
@@ -77,15 +77,21 @@ class CasAuthentication(Authenticate):
         filter_query = ""
         try:
             req = urlparse.parse_qs(query)
+            if self.CONST_ACR not in req:
+                if len(req) > 0:
+                    query += "&"
+                else:
+                    query += "?"
+                query += self.CONST_ACR + "=" + acr
+                req[self.CONST_ACR] = [acr]
+
             filter_query = self.filter_query(req, filter)
-            #acr = req['acr_values'][0]
         except KeyError:
             pass
-            #acr = None
 
         nonce = uuid.uuid4().get_urn()
         service_url = urllib.urlencode(
-            {self.CONST_SERVICE: self.get_service_url(nonce, filter_query)}) #acr )})
+            {self.CONST_SERVICE: self.get_service_url(nonce, filter_query)})
         cas_url = self.cas_server + self.CONST_CASLOGIN + service_url
         cookie = self.create_cookie(
             '{"' + self.CONST_NONCE + '": "' + base64.b64encode(nonce) + '", "' + self.CONST_QUERY + '": "' +

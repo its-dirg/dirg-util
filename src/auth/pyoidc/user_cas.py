@@ -14,7 +14,7 @@ class CasAuthnMethod(_UserAuthnMethod):
     # authentication.
     CONST_QUERY = "query"
 
-    def __init__(self, srv, cas_server, service_url, return_to,
+    def __init__(self, srv, cas_server, service_url, return_to, acr,
                  extra_validation=None):
         """
         Constructor for the class.
@@ -29,6 +29,7 @@ class CasAuthnMethod(_UserAuthnMethod):
                                                                             extra_validation=None,
                                                                             cookie_dict=None,
                                                                             cookie_object=None))
+        self.acr = acr
         self.return_to = return_to
 
     def __call__(self, query, *args, **kwargs):
@@ -37,7 +38,7 @@ class CasAuthnMethod(_UserAuthnMethod):
             "acr_values"
         ]
 
-        return self.authn_helper.create_redirect(query, filter)
+        return self.authn_helper.create_redirect(query, self.acr, filter)
 
     def verify(self, request, cookie, **kwargs):
         """

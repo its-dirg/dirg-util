@@ -2,6 +2,7 @@ import logging
 import urlparse
 import time
 from oic.utils.authn.user import UserAuthnMethod, create_return_url
+from auth.base import Authenticate
 from auth.form import DirgUsernamePasswordYubikeyMako
 from oic.utils.http_util import Redirect
 from oic.utils.http_util import Unauthorized
@@ -21,6 +22,18 @@ class _UserAuthnMethod(UserAuthnMethod):
     def __call__(self, *args, **kwargs):
         raise NotImplemented
 
+    def __setattr__(self, name, value):
+        if name == "srv":
+            try:
+                self.authn_helper.__setattr__(name, value)
+            except Exception:
+                pass
+            try:
+                self.userauthnmethod.__setattr__(name, value)
+            except Exception:
+                pass
+        super(_UserAuthnMethod, self).__setattr__(name, value)
+
     def set_srv(self, srv):
         self.srv = srv
         if self.authn_helper is not None:
@@ -29,7 +42,7 @@ class _UserAuthnMethod(UserAuthnMethod):
     def authenticated_as(self, cookie=None, **kwargs):
         if self.authn_helper is not None:
             return self.authn_helper.authenticated_as(cookie, **kwargs)
-        self.userauthnmethod.authenticated_as(cookie=None, **kwargs)
+        return self.userauthnmethod.authenticated_as(cookie, **kwargs)
 
     def generateReturnUrl(self, return_to, uid):
         return create_return_url(return_to, uid, **{self.query_param: "true"})
@@ -39,7 +52,7 @@ class UsernamePasswordMako(_UserAuthnMethod):
     """Do user authentication using the normal username password form in a
     WSGI environment using Mako as template system"""
 
-    def __init__(self, username_query_key, srv, mako_template, template_lookup, pwd, return_to="",
+    def __init__(self, username_query_key, srv, mako_template, template_lookup, pwd, acr=None, return_to="",
                  templ_arg_func=None, cookie_dict=None, password_query_key=None, yubikey_db=None, yubikey_server=None,
                  yubikey_otp_key=None):
         """
@@ -55,7 +68,7 @@ class UsernamePasswordMako(_UserAuthnMethod):
                                                      cookie_dict=cookie_dict, )
 
         _UserAuthnMethod.__init__(self, srv, authn_helper=authn_helper)
-
+        self.acr = acr
 
         self.return_to = return_to
         if templ_arg_func:
@@ -72,11 +85,19 @@ class UsernamePasswordMako(_UserAuthnMethod):
         :param kwargs:
         :return:
         """
-        acr = None
         try:
             req = urlparse.parse_qs(kwargs["query"])
-            acr = req["acr_values"][0]
+            acr = req[Authenticate.CONST_ACR][0]
         except:
+            if Authenticate.CONST_ACR in kwargs:
+                acr = kwargs[Authenticate.CONST_ACR]
+                query = kwargs["query"]
+                if len(req) > 0:
+                    query += "&"
+                else:
+                    query += "?"
+                query += Authenticate.CONST_ACR + "=" + acr
+                kwargs["query"] = query
             pass
 
         argv = {"password": "",
@@ -101,6 +122,8 @@ class UsernamePasswordMako(_UserAuthnMethod):
         """
         Put up the login form
         """
+        if Authenticate.CONST_ACR not in kwargs:
+            kwargs[Authenticate.CONST_ACR] = self.acr
         return self.authn_helper.create_response(self.templ_arg_func(**kwargs), cookie)
 
     def verify(self, request, **kwargs):

@@ -22,7 +22,6 @@ setup(
                                         "static/angular.js",
                                         "static/bootbox.min.js",
                                         "static/basic.css",
-                                        "static/jquery.min.1.9.1.js",
                                         "static/jquery.min.latest.js",
                                         "static/toaster.css",
                                         "static/toaster.js",

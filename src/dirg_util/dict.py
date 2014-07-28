@@ -64,7 +64,7 @@ class Sqllite3Dict(UserDict.DictMixin):
         con = self.connect()
         keys = [row[0] for row in con.execute("select key from data").fetchall()]
         con.close()
-        return
+        return keys
 
 
 class ReadOnlyLDAPDictException(Exception):

@@ -15,10 +15,6 @@ from _ldap import SCOPE_SUBTREE
 class Sqllite3Dict(UserDict.DictMixin):
     def __init__(self, dict_path):
         self.dict_path = dict_path
-        con = self.connect()
-        con.execute("delete from data")
-        con.commit()
-        con.close()
 
     def connect(self):
         con = None
